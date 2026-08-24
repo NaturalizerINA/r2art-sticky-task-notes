@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="dark">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description"
+    content="R2Art Sticky Task Notes - Aesthetic Visual Sticky Note & Task Management Canvas with Freeform Corkboard, Kanban, Interactive Checklists, and Pomodoro Focus Timer.">
+  <meta name="author" content="Rahmad Mukminullah (NaturalizerINA)">
+  <meta name="theme-color" content="#191816">
+
+  <title data-i18n="appTitle">R2Art Sticky Task Notes</title>
+
+  <!-- Google Fonts: Pencil Handwriting & Sketch Aesthetics -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Architects+Daughter&family=Caveat:wght@500;600;700&family=Fira+Code:wght@400;500;600&family=Kalam:wght@300;400;700&family=Patrick+Hand&display=swap"
+    rel="stylesheet">
+
+  <!-- Application Stylesheets -->
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/sticky.css">
+  <link rel="stylesheet" href="css/components.css">
+
+  <link rel="icon"
+    href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22><text y=%2226%22 font-size=%2228%22>📌</text></svg>">
+</head>
+
+<body>
+
+  <!-- ========================================================================
+       Header / Navbar
+       ======================================================================== -->
+  <header class="app-header">
+    <div class="header-container">
+      <div class="brand-section">
+        <span class="brand-icon-pin">📌</span>
+        <div>
+          <h1 class="brand-title" data-i18n="appTitle">R2Art Sticky Task Notes</h1>
+          <span class="brand-subtitle" data-i18n="appSubtitle">Papan Catatan &amp; Manajemen Tugas Visual</span>
+        </div>
+      </div>
+
+      <!-- View Switcher Tabs -->
+      <nav class="view-switcher-group" role="tablist" aria-label="View Switcher">
+        <button type="button" class="view-tab-btn active" data-view="canvas" role="tab">
+          <span>📌</span> <span data-i18n="viewCanvas">Papan Bebas</span>
+        </button>
+        <button type="button" class="view-tab-btn" data-view="kanban" role="tab">
+          <span>📋</span> <span data-i18n="viewKanban">Kanban</span>
+        </button>
+        <button type="button" class="view-tab-btn" data-view="grid" role="tab">
+          <span>🗂️</span> <span data-i18n="viewGrid">Grid</span>
+        </button>
+        <button type="button" class="view-tab-btn" data-view="timeline" role="tab">
+          <span>📅</span> <span data-i18n="viewTimeline">Jadwal</span>
+        </button>
+      </nav>
+
+      <!-- Action Buttons & Switchers -->
+      <div class="header-actions">
+        <!-- Language Switcher -->
+        <div class="lang-toggle-pill" role="group" aria-label="Language Selector">
+          <button type="button" class="lang-btn active" data-lang="id" title="Bahasa Indonesia">ID</button>
+          <span class="lang-divider">/</span>
+          <button type="button" class="lang-btn" data-lang="en" title="English">EN</button>
+        </div>
+
+        <!-- Sound Toggle -->
+        <button type="button" class="icon-btn" id="soundToggleBtn" data-i18n-title="btnSoundToggle" title="Efek Suara">
+          <span id="soundIcon">🔊</span>
+        </button>
+
+        <!-- Theme Toggle -->
+        <button type="button" class="icon-btn" id="themeToggleBtn" data-i18n-title="btnThemeToggle" title="Ganti Tema">
+          <span id="themeIcon">☀️</span>
+        </button>
+
+        <!-- Back to Portfolio -->
+        <a href="../index.html" class="btn-portfolio-back" title="Kembali ke Portofolio NaturalizerINA">
+          <span>←</span> <span>Portfolio</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- ========================================================================
+       Main Controls Toolbar
+       ======================================================================== -->
+  <section class="app-toolbar">
+    <div class="toolbar-container">
+      <div class="toolbar-left">
+        <button type="button" class="btn-primary" id="btnNewNote">
+          <span>➕</span> <span data-i18n="btnNewNote">Catatan Baru</span>
+        </button>
+        <button type="button" class="btn-secondary" id="btnQuickAdd" title="Tambah cepat">
+          <span>⚡</span> <span data-i18n="btnQuickAdd">Tambah Cepat</span>
+        </button>
+
+        <div class="search-box-wrapper">
+          <input type="text" class="search-input" id="globalSearchInput"
+            data-i18n-placeholder="searchPlaceholder" placeholder="Cari catatan, tag, atau checklist... (Tekan /)">
+          <span class="search-icon-hint">🔍</span>
+        </div>
+      </div>
+
+      <div class="toolbar-right">
+        <!-- Filter Priority -->
+        <select class="select-filter" id="filterPrioritySelect" aria-label="Filter Priority">
+          <option value="all" data-i18n="filterPriority">Prioritas (Semua)</option>
+          <option value="urgent">🔴 Urgent</option>
+          <option value="high">🟠 High</option>
+          <option value="medium">🟡 Medium</option>
+          <option value="low">🟢 Low</option>
+        </select>
+
+        <!-- Filter Color -->
+        <select class="select-filter" id="filterColorSelect" aria-label="Filter Color">
+          <option value="all" data-i18n="filterColor">Warna (Semua)</option>
+          <option value="lemon">🍋 Lemon Yellow</option>
+          <option value="matcha">🍵 Matcha Sage</option>
+          <option value="terracotta">🏺 Terracotta</option>
+          <option value="sky">☁️ Slate Sky</option>
+          <option value="lavender">🪻 Lavender</option>
+          <option value="sand">🏜️ Kraft Sand</option>
+          <option value="coral">🌸 Rose Coral</option>
+          <option value="gray">🌫️ Cloud Gray</option>
+        </select>
+
+        <!-- Filter Status -->
+        <select class="select-filter" id="filterStatusSelect" aria-label="Filter Status">
+          <option value="all" data-i18n="filterStatus">Status (Semua)</option>
+          <option value="backlog" data-i18n="colBacklog">Ide &amp; Catatan</option>
+          <option value="todo" data-i18n="colTodo">Akan Dikerjakan</option>
+          <option value="in-progress" data-i18n="colInProgress">Sedang Proses</option>
+          <option value="done" data-i18n="colDone">Selesai</option>
+        </select>
+
+        <!-- Sort -->
+        <select class="select-filter" id="sortBySelect" aria-label="Sort By">
+          <option value="updated" data-i18n="sortUpdated">Terbaru Diubah</option>
+          <option value="created" data-i18n="sortCreated">Terbaru Dibuat</option>
+          <option value="priority" data-i18n="sortPriority">Prioritas Tertinggi</option>
+          <option value="dueDate" data-i18n="sortDueDate">Tenggat Waktu</option>
+          <option value="title" data-i18n="sortTitle">Judul (A-Z)</option>
+        </select>
+
+        <!-- Snap to grid -->
+        <button type="button" class="btn-secondary" id="btnSnapGrid" title="Snap to Grid Toggle">
+          <span>📐</span> <span data-i18n="btnSnapGrid">Snap Grid</span>
+        </button>
+
+        <!-- Tools: Pomodoro, Stats, Export -->
+        <button type="button" class="btn-secondary" id="btnTogglePomodoro">
+          <span>⏱️</span> <span data-i18n="btnTimer">Pomodoro</span>
+        </button>
+        <button type="button" class="btn-secondary" id="btnOpenStats">
+          <span>📊</span> <span data-i18n="btnStats">Statistik</span>
+        </button>
+        <button type="button" class="btn-secondary" id="btnOpenExport">
+          <span>💾</span> <span data-i18n="btnExport">Ekspor / Impor</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Tags Filter Horizontal Bar -->
+    <div class="tags-filter-bar" id="tagsFilterChips">
+      <!-- Generated dynamically by app.js -->
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       Workspace Content Area (4 Views)
+       ======================================================================== -->
+  <main class="workspace-content-area">
+
+    <!-- 1. Freeform Corkboard Canvas View -->
+    <section class="view-container active" id="canvasViewContainer" role="tabpanel">
+      <div class="corkboard-canvas" id="canvasCorkboard">
+        <!-- Rendered dynamically by board.js -->
+      </div>
+    </section>
+
+    <!-- 2. Kanban Workflow Board View -->
+    <section class="view-container" id="kanbanViewContainer" role="tabpanel">
+      <!-- Backlog / Ideas Column -->
+      <div class="kanban-column" data-status="backlog">
+        <div class="kanban-col-header">
+          <h3 class="kanban-col-title"><span>💡</span> <span data-i18n="colBacklog">Ide &amp; Catatan</span></h3>
+          <span class="kanban-count-badge">0</span>
+        </div>
+        <div class="kanban-cards-wrapper"></div>
+      </div>
+
+      <!-- To Do Column -->
+      <div class="kanban-column" data-status="todo">
+        <div class="kanban-col-header">
+          <h3 class="kanban-col-title"><span>📝</span> <span data-i18n="colTodo">Akan Dikerjakan</span></h3>
+          <span class="kanban-count-badge">0</span>
+        </div>
+        <div class="kanban-cards-wrapper"></div>
+      </div>
+
+      <!-- In Progress Column -->
+      <div class="kanban-column" data-status="in-progress">
+        <div class="kanban-col-header">
+          <h3 class="kanban-col-title"><span>⏳</span> <span data-i18n="colInProgress">Sedang Proses</span></h3>
+          <span class="kanban-count-badge">0</span>
+        </div>
+        <div class="kanban-cards-wrapper"></div>
+      </div>
+
+      <!-- Completed Column -->
+      <div class="kanban-column" data-status="done">
+        <div class="kanban-col-header">
+          <h3 class="kanban-col-title"><span>✅</span> <span data-i18n="colDone">Selesai</span></h3>
+          <span class="kanban-count-badge">0</span>
+        </div>
+        <div class="kanban-cards-wrapper"></div>
+      </div>
+    </section>
+
+    <!-- 3. Responsive Grid View -->
+    <section class="view-container" id="gridViewContainer" role="tabpanel">
+      <div class="grid-cards-container" id="gridCardsContainer">
+        <!-- Rendered dynamically by board.js -->
+      </div>
+    </section>
+
+    <!-- 4. Timeline / Due Date Schedule View -->
+    <section class="view-container" id="timelineViewContainer" role="tabpanel">
+      <div class="timeline-columns-container" id="timelineColumnsContainer">
+        <!-- Rendered dynamically by board.js -->
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ========================================================================
+       Modals & Floating Widgets
+       ======================================================================== -->
+
+  <!-- 1. Note Editor Modal -->
+  <div class="modal-overlay" id="noteEditModal" role="dialog" aria-modal="true">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title" id="modalNoteHeaderTitle" data-i18n="modalNewTitle">Buat Sticky Note Baru</h3>
+        <button type="button" class="modal-close-btn" id="noteModalCloseBtn" aria-label="Close">✕</button>
+      </div>
+
+      <form id="noteForm">
+        <div class="modal-body">
+          <!-- Title -->
+          <div class="form-group">
+            <label class="form-label" for="noteTitleInput" data-i18n="labelTitle">Judul Catatan</label>
+            <input type="text" class="form-input" id="noteTitleInput" data-i18n-placeholder="placeholderTitle"
+              placeholder="Contoh: Rilis Fitur Baru v2.0...">
+          </div>
+
+          <!-- Color Palette Picker -->
+          <div class="form-group">
+            <label class="form-label" data-i18n="labelColor">Warna Kertas</label>
+            <div class="color-picker-row">
+              <button type="button" class="color-choice-btn color-lemon active" data-color="lemon" title="Lemon"></button>
+              <button type="button" class="color-choice-btn color-matcha" data-color="matcha" title="Matcha"></button>
+              <button type="button" class="color-choice-btn color-terracotta" data-color="terracotta" title="Terracotta"></button>
+              <button type="button" class="color-choice-btn color-sky" data-color="sky" title="Sky"></button>
+              <button type="button" class="color-choice-btn color-lavender" data-color="lavender" title="Lavender"></button>
+              <button type="button" class="color-choice-btn color-sand" data-color="sand" title="Sand"></button>
+              <button type="button" class="color-choice-btn color-coral" data-color="coral" title="Coral"></button>
+              <button type="button" class="color-choice-btn color-gray" data-color="gray" title="Gray"></button>
+            </div>
+          </div>
+
+          <!-- Accent / Attachment Style -->
+          <div class="form-group">
+            <label class="form-label" data-i18n="labelAccent">Gaya Tempelan</label>
+            <div class="accent-picker-row">
+              <button type="button" class="accent-choice-btn active" data-accent="pin" data-i18n="accentPin">Pushpin 📌</button>
+              <button type="button" class="accent-choice-btn" data-accent="tape" data-i18n="accentTape">Washi Tape 🏷️</button>
+              <button type="button" class="accent-choice-btn" data-accent="clip" data-i18n="accentClip">Paperclip 📎</button>
+              <button type="button" class="accent-choice-btn" data-accent="plain" data-i18n="accentPlain">Polos 📄</button>
+            </div>
+          </div>
+
+          <!-- Content Details -->
+          <div class="form-group">
+            <label class="form-label" for="noteContentInput" data-i18n="labelContent">Isi Catatan / Deskripsi</label>
+            <textarea class="form-textarea" id="noteContentInput" data-i18n-placeholder="placeholderContent"
+              placeholder="Tulis detail, ide, atau catatan di sini..."></textarea>
+          </div>
+
+          <!-- Interactive Checklist Builder -->
+          <div class="form-group">
+            <label class="form-label" data-i18n="labelChecklist">Checklist / Subtugas</label>
+            <div class="input-with-btn">
+              <input type="text" class="form-input" id="modalChecklistInput" data-i18n-placeholder="placeholderChecklist"
+                placeholder="Tambah item checklist baru...">
+              <button type="button" class="btn-secondary" id="btnAddModalChecklist" data-i18n="btnAddChecklist">+ Tambah</button>
+            </div>
+            <ul class="modal-chk-list" id="modalChecklistItems"></ul>
+          </div>
+
+          <!-- Doodle / Sketch Studio Attachment -->
+          <div class="form-group">
+            <label class="form-label" data-i18n="labelAttachment">Lampiran Sketsa / Gambar Doodle</label>
+            <div style="display: flex; gap: 10px;">
+              <button type="button" class="btn-secondary" id="btnLaunchDoodle" data-i18n="btnDrawDoodle">✏️ Gambar Sketsa Baru</button>
+              <button type="button" class="btn-secondary hidden" id="btnRemoveDoodle" data-i18n="btnRemoveDoodle">Hapus Sketsa</button>
+            </div>
+            <div class="modal-doodle-preview-area hidden" id="modalDoodlePreviewArea">
+              <img id="modalDoodleImg" src="" alt="Sketch Doodle Preview">
+            </div>
+          </div>
+
+          <!-- Priority & Status Row -->
+          <div class="form-row-2">
+            <div class="form-group">
+              <label class="form-label" for="notePriorityInput" data-i18n="labelPriority">Tingkat Prioritas</label>
+              <select class="form-select" id="notePriorityInput">
+                <option value="low" data-i18n="priorityLow">🟢 Rendah (Low)</option>
+                <option value="medium" selected data-i18n="priorityMedium">🟡 Sedang (Medium)</option>
+                <option value="high" data-i18n="priorityHigh">🟠 Tinggi (High)</option>
+                <option value="urgent" data-i18n="priorityUrgent">🔴 Mendesak (Urgent)</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="noteStatusInput" data-i18n="labelStatus">Status Alur Kerja</label>
+              <select class="form-select" id="noteStatusInput">
+                <option value="backlog" data-i18n="colBacklog">💡 Ide &amp; Catatan</option>
+                <option value="todo" selected data-i18n="colTodo">📝 Akan Dikerjakan</option>
+                <option value="in-progress" data-i18n="colInProgress">⏳ Sedang Proses</option>
+                <option value="done" data-i18n="colDone">✅ Selesai</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Due Date & Tags Row -->
+          <div class="form-row-2">
+            <div class="form-group">
+              <label class="form-label" for="noteDueDateInput" data-i18n="labelDueDate">Tenggat Waktu</label>
+              <input type="date" class="form-input" id="noteDueDateInput">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="noteTagsInput" data-i18n="labelTags">Label / Tags (koma)</label>
+              <input type="text" class="form-input" id="noteTagsInput" data-i18n-placeholder="placeholderTags"
+                placeholder="dev, frontend, urgent">
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn-secondary" id="btnCancelNoteModal" data-i18n="btnCancel">Batal</button>
+          <button type="submit" class="btn-primary" id="btnSaveNoteModal" data-i18n="btnSaveNote">Simpan Catatan</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 2. Doodle & Sketch Studio Modal -->
+  <div class="modal-overlay" id="doodleModal" role="dialog" aria-modal="true">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title" data-i18n="doodleTitle">Studio Sketsa &amp; Doodle</h3>
+        <button type="button" class="modal-close-btn" onclick="window.DoodleStudio.close()">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="doodle-toolbar">
+          <div class="doodle-tools-left">
+            <button type="button" class="doodle-color-btn active" data-color="#191816" style="background:#191816;" title="Black"></button>
+            <button type="button" class="doodle-color-btn" data-color="#b85d37" style="background:#b85d37;" title="Terracotta"></button>
+            <button type="button" class="doodle-color-btn" data-color="#466e56" style="background:#466e56;" title="Sage"></button>
+            <button type="button" class="doodle-color-btn" data-color="#2563eb" style="background:#2563eb;" title="Blue"></button>
+            <button type="button" class="doodle-color-btn" data-color="#dc2626" style="background:#dc2626;" title="Red"></button>
+
+            <span style="margin-left: 8px;" data-i18n="doodleSize">Ukuran:</span>
+            <input type="range" id="doodleSizeInput" min="1" max="15" value="3" style="width: 80px;">
+            <span id="doodleSizeVal" style="font-size:12px; font-family:var(--font-code);">3px</span>
+          </div>
+
+          <div class="doodle-tools-right">
+            <button type="button" class="btn-secondary active" id="doodlePenBtn" data-i18n="doodlePen">✏️ Pena</button>
+            <button type="button" class="btn-secondary" id="doodleEraserBtn" data-i18n="doodleEraser">🧹 Penghapus</button>
+            <button type="button" class="btn-secondary" id="doodleClearBtn" data-i18n="doodleClear">🗑️ Bersihkan</button>
+          </div>
+        </div>
+
+        <div class="doodle-canvas-wrapper">
+          <canvas id="doodleCanvas" width="460" height="300"></canvas>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn-secondary" onclick="window.DoodleStudio.close()" data-i18n="doodleClose">Tutup</button>
+        <button type="button" class="btn-primary" onclick="window.DoodleStudio.save()" data-i18n="doodleSave">Gunakan di Catatan</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. Floating Pomodoro Focus Timer Widget -->
+  <aside class="pomodoro-floating-widget" id="pomodoroWidget" aria-label="Pomodoro Focus Timer">
+    <div class="pomo-header">
+      <div class="pomo-title">⏱️ <span data-i18n="pomodoroTitle">Focus Pomodoro</span></div>
+      <button type="button" class="pomo-close-btn" id="pomoCloseBtn" title="Close">✕</button>
+    </div>
+    <div class="pomo-body">
+      <div class="pomo-mode-tabs">
+        <button type="button" class="pomo-mode-btn active" data-mode="work" data-i18n="pomoWork">Fokus (25m)</button>
+        <button type="button" class="pomo-mode-btn" data-mode="shortBreak" data-i18n="pomoShortBreak">Rehat (5m)</button>
+        <button type="button" class="pomo-mode-btn" data-mode="longBreak" data-i18n="pomoLongBreak">Panjang (15m)</button>
+      </div>
+
+      <div class="pomo-timer-display" id="pomoTimeDisplay">25:00</div>
+
+      <div class="pomo-progress-track">
+        <div class="pomo-progress-fill" id="pomoProgressFill"></div>
+      </div>
+
+      <div class="pomo-controls">
+        <button type="button" class="btn-primary" id="pomoStartBtn" data-i18n="pomoStart">Mulai</button>
+        <button type="button" class="btn-primary hidden" id="pomoPauseBtn" data-i18n="pomoPause">Jeda</button>
+        <button type="button" class="btn-secondary" id="pomoResetBtn" data-i18n="pomoReset">Reset</button>
+      </div>
+
+      <div class="pomo-task-info">
+        <span data-i18n="pomoActiveTask">Tugas Terpilih:</span>
+        <strong id="pomoActiveTaskTitle">Belum ada tugas</strong>
+      </div>
+      <div style="font-size:12px; color:var(--text-muted); margin-top:4px;">
+        <span data-i18n="pomoCompletedSessions">Sesi Selesai:</span> <strong id="pomoCompletedCount">0</strong>
+      </div>
+    </div>
+  </aside>
+
+  <!-- 4. Statistics Modal -->
+  <div class="modal-overlay" id="statsModal" role="dialog" aria-modal="true">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title" data-i18n="statsTitle">Statistik &amp; Ringkasan Produktivitas</h3>
+        <button type="button" class="modal-close-btn" id="statsModalCloseBtn">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="stats-grid">
+          <div class="stat-box">
+            <div class="stat-box-num" id="statTotalNotes">0</div>
+            <div class="stat-box-label" data-i18n="statsTotalNotes">Total Catatan</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-box-num" id="statCompletedTasks">0</div>
+            <div class="stat-box-label" data-i18n="statsCompletedTasks">Tugas Selesai</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-box-num" id="statPendingTasks">0</div>
+            <div class="stat-box-label" data-i18n="statsPendingTasks">Tugas Berjalan</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-box-num" id="statCompletionRate">0%</div>
+            <div class="stat-box-label" data-i18n="statsCompletionRate">Tingkat Penyelesaian</div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" data-i18n="statsChecklistItems">Subtugas Checklist Selesai</label>
+          <div id="statChecklistsDone" style="font-family:var(--font-heading); font-size:20px; color:var(--accent-terracotta);">0 / 0</div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" data-i18n="statsByTags">Tag Terpopuler</label>
+          <div class="stat-tags-cloud" id="statsTopTags"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. Export / Import Modal -->
+  <div class="modal-overlay" id="exportModal" role="dialog" aria-modal="true">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title" data-i18n="exportTitle">Ekspor &amp; Cadangkan Data</h3>
+        <button type="button" class="modal-close-btn" id="exportModalCloseBtn">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="export-section-group">
+          <h4 data-i18n="exportTitle">Ekspor Catatan</h4>
+          <p data-i18n="exportDesc">Simpan catatan Anda ke file lokal atau unduh tangkapan layar papan.</p>
+          <div class="export-btn-group">
+            <button type="button" class="btn-primary" id="btnExportJSON" data-i18n="btnExportJSON">Unduh Cadangan (JSON)</button>
+            <button type="button" class="btn-secondary" id="btnExportMD" data-i18n="btnExportMD">Ekspor Catatan (Markdown)</button>
+            <button type="button" class="btn-secondary" id="btnExportPNG" data-i18n="btnExportPNG">Unduh Gambar Papan (PNG Snapshot)</button>
+          </div>
+        </div>
+
+        <hr style="border: 0; border-top: 1px solid var(--border-subtle); margin: 20px 0;">
+
+        <div class="export-section-group">
+          <h4 data-i18n="importTitle">Impor &amp; Pulihkan Data</h4>
+          <p data-i18n="importDesc">Pilih file JSON cadangan untuk memuat kembali catatan Anda.</p>
+          <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+            <input type="file" id="importJSONFileInput" accept=".json" style="display: none;">
+            <button type="button" class="btn-secondary" onclick="document.getElementById('importJSONFileInput').click()" data-i18n="btnImportFile">Pilih File JSON</button>
+            <button type="button" class="btn-secondary" id="btnResetData" style="color: var(--accent-coral);" data-i18n="btnResetAll">Kembalikan Catatan Bawaan (Reset)</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notifications Container -->
+  <div class="toast-container" id="toastContainer" aria-live="polite"></div>
+
+  <!-- ========================================================================
+       Application Scripts (Modular ES6+)
+       ======================================================================== -->
+  <script src="js/i18n.js"></script>
+  <script src="js/audio.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/doodle.js"></script>
+  <script src="js/timer.js"></script>
+  <script src="js/notes.js"></script>
+  <script src="js/board.js"></script>
+  <script src="js/app.js"></script>
+
+</body>
+
+</html>

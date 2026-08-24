@@ -1,0 +1,564 @@
+/* ==========================================================================
+   R2Art Sticky Task Notes - Sticky Note Cards, Attachments & Board Views
+   ========================================================================== */
+
+/* ==========================================================================
+   1. Sticky Note Base Styling
+   ========================================================================== */
+.sticky-note {
+  position: absolute;
+  width: 280px;
+  min-height: 200px;
+  padding: 24px 18px 16px 18px;
+  border-radius: 4px;
+  box-shadow: var(--shadow-note);
+  color: var(--text-dark);
+  font-family: var(--font-body);
+  user-select: none;
+  cursor: grab;
+  transition: box-shadow 0.2s ease, transform 0.15s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.sticky-note:hover {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28), 0 2px 6px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px) scale(1.01);
+}
+
+.sticky-note.is-dragging {
+  cursor: grabbing;
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.45);
+  opacity: 0.95;
+  transform: scale(1.04);
+  z-index: 9999 !important;
+}
+
+/* 8 Earthy Pastel Color Schemes (All tested with high text contrast) */
+.sticky-note.color-lemon {
+  background: linear-gradient(135deg, #fef9c3 0%, #fef08a 100%);
+  border-left: 3px solid #facc15;
+}
+
+.sticky-note.color-matcha {
+  background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
+  border-left: 3px solid #4ade80;
+}
+
+.sticky-note.color-terracotta {
+  background: linear-gradient(135deg, #ffedd5 0%, #fed7aa 100%);
+  border-left: 3px solid #fb923c;
+}
+
+.sticky-note.color-sky {
+  background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%);
+  border-left: 3px solid #38bdf8;
+}
+
+.sticky-note.color-lavender {
+  background: linear-gradient(135deg, #f3e8ff 0%, #e9d5ff 100%);
+  border-left: 3px solid #c084fc;
+}
+
+.sticky-note.color-sand {
+  background: linear-gradient(135deg, #f5f0eb 0%, #e8dec8 100%);
+  border-left: 3px solid #b08968;
+}
+
+.sticky-note.color-coral {
+  background: linear-gradient(135deg, #ffe4e6 0%, #fecdd3 100%);
+  border-left: 3px solid #f43f5e;
+}
+
+.sticky-note.color-gray {
+  background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+  border-left: 3px solid #9ca3af;
+}
+
+/* ==========================================================================
+   2. Header Accents (Pushpin, Washi Tape, Paperclip)
+   ========================================================================== */
+.note-pin {
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 22px;
+  height: 22px;
+  background: radial-gradient(circle at 35% 35%, #e11d48, #9f1239);
+  border-radius: 50%;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.4), inset 0 2px 3px rgba(255, 255, 255, 0.6);
+  z-index: 10;
+}
+
+.note-pin::after {
+  content: '';
+  position: absolute;
+  top: 9px;
+  left: 9px;
+  width: 4px;
+  height: 4px;
+  background: #ffffff;
+  border-radius: 50%;
+  opacity: 0.8;
+}
+
+.note-washi-tape {
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%) rotate(-1deg);
+  width: 90px;
+  height: 22px;
+  background: rgba(220, 205, 180, 0.7);
+  border-left: 2px dashed rgba(180, 160, 130, 0.8);
+  border-right: 2px dashed rgba(180, 160, 130, 0.8);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12);
+  z-index: 10;
+}
+
+.note-paperclip {
+  position: absolute;
+  top: -10px;
+  right: 20px;
+  font-size: 24px;
+  transform: rotate(20deg);
+  filter: drop-shadow(1px 2px 2px rgba(0,0,0,0.3));
+  z-index: 10;
+}
+
+/* ==========================================================================
+   3. Note Header & Content
+   ========================================================================== */
+.note-header-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  gap: 6px;
+}
+
+.note-badges {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex-wrap: wrap;
+}
+
+.priority-pill {
+  font-size: 13px;
+}
+
+.date-badge {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.08);
+  color: #222;
+}
+
+.date-badge.today {
+  background: #dbeafe;
+  color: #1e40af;
+  font-weight: 700;
+}
+
+.date-badge.overdue {
+  background: #fee2e2;
+  color: #b91c1c;
+  font-weight: 700;
+  animation: pulse-overdue 2s infinite;
+}
+
+@keyframes pulse-overdue {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.75; }
+}
+
+.note-quick-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  opacity: 0.25;
+  transition: opacity 0.2s ease;
+}
+
+.sticky-note:hover .note-quick-actions {
+  opacity: 1;
+}
+
+.note-btn-action {
+  background: rgba(0, 0, 0, 0.06);
+  border: none;
+  border-radius: 4px;
+  width: 24px;
+  height: 24px;
+  font-size: 13px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s ease, transform 0.15s ease;
+}
+
+.note-btn-action:hover {
+  background: rgba(0, 0, 0, 0.15);
+  transform: scale(1.1);
+}
+
+.note-title {
+  font-family: var(--font-heading);
+  font-size: 19px;
+  font-weight: 700;
+  color: #191816;
+  margin-bottom: 8px;
+  line-height: 1.25;
+  word-break: break-word;
+}
+
+.note-body-text {
+  font-size: 16px;
+  line-height: 1.4;
+  color: #2b2723;
+  margin-bottom: 12px;
+  word-break: break-word;
+}
+
+.note-body-text code {
+  font-family: var(--font-code);
+  background: rgba(0,0,0,0.08);
+  padding: 1px 4px;
+  border-radius: 3px;
+  font-size: 13px;
+}
+
+/* ==========================================================================
+   4. Interactive Checklists
+   ========================================================================== */
+.note-checklist-section {
+  margin: 10px 0;
+  background: rgba(255, 255, 255, 0.45);
+  border-radius: 6px;
+  padding: 8px 10px;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.checklist-progress-bar {
+  width: 100%;
+  height: 5px;
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 4px;
+}
+
+.checklist-progress-fill {
+  height: 100%;
+  background: #10b981;
+  transition: width 0.3s ease;
+}
+
+.checklist-progress-text {
+  font-size: 11px;
+  font-weight: 600;
+  color: #444;
+  text-align: right;
+  margin-bottom: 6px;
+}
+
+.note-checklist-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.checklist-item {
+  display: flex;
+  align-items: center;
+  font-size: 15px;
+}
+
+.checklist-item.checked .checklist-item-text {
+  text-decoration: line-through;
+  opacity: 0.6;
+  color: #666;
+}
+
+/* Custom Checkbox */
+.custom-checkbox {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  cursor: pointer;
+  width: 100%;
+}
+
+.custom-checkbox input {
+  display: none;
+}
+
+.checkbox-box {
+  width: 16px;
+  height: 16px;
+  border: 1.5px solid #444;
+  border-radius: 3px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.15s ease;
+  background: #fff;
+}
+
+.custom-checkbox input:checked + .checkbox-box {
+  background: #10b981;
+  border-color: #10b981;
+}
+
+.custom-checkbox input:checked + .checkbox-box::after {
+  content: '✓';
+  color: #fff;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.checklist-item-text {
+  word-break: break-word;
+}
+
+/* Tags in note */
+.note-tags-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 8px;
+}
+
+.note-tags-list .tag-chip {
+  background: rgba(0, 0, 0, 0.08);
+  border: none;
+  border-radius: 3px;
+  padding: 2px 6px;
+  font-size: 12px;
+  font-family: var(--font-code);
+  color: #333;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.note-tags-list .tag-chip:hover {
+  background: rgba(0, 0, 0, 0.16);
+}
+
+/* Doodle Attachment Preview */
+.note-doodle-preview {
+  margin: 8px 0;
+  border-radius: 4px;
+  overflow: hidden;
+  border: 1px dashed rgba(0, 0, 0, 0.15);
+  background: rgba(255, 255, 255, 0.5);
+  max-height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.note-doodle-preview img {
+  width: 100%;
+  height: auto;
+  max-height: 120px;
+  object-fit: contain;
+}
+
+/* Note Footer Meta */
+.note-footer-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 12px;
+  padding-top: 6px;
+  border-top: 1px dashed rgba(0, 0, 0, 0.12);
+  font-size: 12px;
+  color: #666;
+}
+
+.note-status-tag {
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+/* ==========================================================================
+   5. Kanban Board View
+   ========================================================================== */
+#kanbanViewContainer.active {
+  display: flex;
+  padding: 20px;
+  gap: 20px;
+  overflow-x: auto;
+  min-height: calc(100vh - 145px);
+}
+
+.kanban-column {
+  flex: 1;
+  min-width: 310px;
+  max-width: 360px;
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  display: flex;
+  flex-direction: column;
+  box-shadow: var(--shadow-sm);
+  transition: border-color 0.2s ease;
+}
+
+.kanban-column.drag-over {
+  border-color: var(--accent-terracotta);
+  background-color: var(--bg-pill);
+}
+
+.kanban-col-header {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.kanban-col-title {
+  font-family: var(--font-heading);
+  font-size: 18px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.kanban-count-badge {
+  background-color: var(--bg-pill);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-pill);
+  padding: 2px 8px;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.kanban-cards-wrapper {
+  padding: 14px;
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-height: 200px;
+}
+
+/* Kanban note cards are relative and full width */
+.kanban-cards-wrapper .sticky-note,
+.grid-cards-container .sticky-note,
+.timeline-cards-list .sticky-note {
+  position: relative !important;
+  left: auto !important;
+  top: auto !important;
+  transform: none !important;
+  width: 100% !important;
+}
+
+.kanban-cards-wrapper .sticky-note:hover,
+.grid-cards-container .sticky-note:hover,
+.timeline-cards-list .sticky-note:hover {
+  transform: translateY(-2px) !important;
+}
+
+.kanban-empty-hint {
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 14px;
+  padding: 30px 10px;
+  border: 1px dashed var(--border-subtle);
+  border-radius: var(--radius-md);
+}
+
+/* ==========================================================================
+   6. Grid / Masonry View
+   ========================================================================== */
+#gridViewContainer.active {
+  display: block;
+  padding: 30px 20px;
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+.grid-cards-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.empty-state-grid {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--text-muted);
+}
+
+/* ==========================================================================
+   7. Timeline / Due Date Schedule View
+   ========================================================================== */
+#timelineViewContainer.active {
+  display: block;
+  padding: 25px 20px;
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+.timeline-columns-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 20px;
+  align-items: start;
+}
+
+.timeline-category-column {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 14px;
+}
+
+.timeline-col-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 14px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.timeline-col-title {
+  font-family: var(--font-heading);
+  font-size: 17px;
+  flex: 1;
+}
+
+.timeline-col-count {
+  font-size: 12px;
+  font-weight: bold;
+  background: var(--bg-pill);
+  padding: 2px 7px;
+  border-radius: var(--radius-pill);
+}
+
+.timeline-cards-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.timeline-empty-card {
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 13px;
+  padding: 15px;
+}

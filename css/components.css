@@ -1,0 +1,562 @@
+/* ==========================================================================
+   R2Art Sticky Task Notes - Modals, Timer, Doodle Canvas & Toasts
+   ========================================================================== */
+
+/* ==========================================================================
+   1. Modal Overlays & Generic Structure
+   ========================================================================== */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 1000;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s ease, visibility 0.2s ease;
+}
+
+.modal-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.modal-card {
+  background-color: var(--bg-modal);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  width: 100%;
+  max-width: 580px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transform: scale(0.95);
+  transition: transform 0.2s ease;
+}
+
+.modal-overlay.active .modal-card {
+  transform: scale(1);
+}
+
+.modal-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.modal-title {
+  font-family: var(--font-heading);
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--accent-terracotta);
+}
+
+.modal-close-btn {
+  background: transparent;
+  border: none;
+  font-size: 20px;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.modal-close-btn:hover {
+  color: var(--text-primary);
+  background: var(--bg-pill);
+}
+
+.modal-body {
+  padding: 20px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.modal-footer {
+  padding: 14px 20px;
+  border-top: 1px solid var(--border-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+/* ==========================================================================
+   2. Form Elements in Note Modal
+   ========================================================================== */
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-label {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: var(--text-secondary);
+}
+
+.form-input, .form-textarea, .form-select {
+  width: 100%;
+  background-color: var(--bg-input);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 8px 12px;
+  color: var(--text-primary);
+  font-size: 15px;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.form-input:focus, .form-textarea:focus, .form-select:focus {
+  border-color: var(--accent-terracotta);
+  box-shadow: 0 0 0 2px rgba(216, 124, 83, 0.2);
+}
+
+.form-textarea {
+  min-height: 90px;
+  resize: vertical;
+}
+
+.form-row-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+/* Color Picker Row */
+.color-picker-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.color-choice-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: transform 0.15s ease, border-color 0.15s ease;
+  position: relative;
+}
+
+.color-choice-btn:hover {
+  transform: scale(1.15);
+}
+
+.color-choice-btn.active {
+  border-color: var(--text-primary);
+  transform: scale(1.15);
+}
+
+.color-choice-btn.active::after {
+  content: '✓';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #191816;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.color-choice-btn.color-lemon { background: #fef08a; }
+.color-choice-btn.color-matcha { background: #bbf7d0; }
+.color-choice-btn.color-terracotta { background: #fed7aa; }
+.color-choice-btn.color-sky { background: #bae6fd; }
+.color-choice-btn.color-lavender { background: #e9d5ff; }
+.color-choice-btn.color-sand { background: #e8dec8; }
+.color-choice-btn.color-coral { background: #fecdd3; }
+.color-choice-btn.color-gray { background: #e5e7eb; }
+
+/* Accent Picker Row */
+.accent-picker-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.accent-choice-btn {
+  background-color: var(--bg-input);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 6px 12px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.accent-choice-btn.active {
+  border-color: var(--accent-terracotta);
+  background-color: var(--bg-pill);
+  color: var(--accent-terracotta);
+  font-weight: bold;
+}
+
+/* Modal Checklists Builder */
+.modal-chk-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.modal-chk-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background-color: var(--bg-input);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 4px 8px;
+}
+
+.modal-chk-text-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: var(--text-primary);
+  font-size: 14px;
+  outline: none;
+}
+
+.btn-chk-remove {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 2px 6px;
+}
+
+.btn-chk-remove:hover {
+  color: var(--accent-coral);
+}
+
+.input-with-btn {
+  display: flex;
+  gap: 8px;
+}
+
+.input-with-btn .form-input {
+  flex: 1;
+}
+
+/* Doodle Section in Note Modal */
+.modal-doodle-preview-area {
+  margin-top: 8px;
+  border: 1px dashed var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 8px;
+  background-color: var(--bg-input);
+  text-align: center;
+}
+
+.modal-doodle-preview-area img {
+  max-width: 100%;
+  max-height: 140px;
+  object-fit: contain;
+  border-radius: 4px;
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* ==========================================================================
+   3. Doodle & Sketch Studio Modal
+   ========================================================================== */
+#doodleModal .modal-card {
+  max-width: 520px;
+}
+
+.doodle-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.doodle-tools-left, .doodle-tools-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.doodle-color-btn {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  cursor: pointer;
+}
+
+.doodle-color-btn.active {
+  border-color: var(--text-primary);
+  transform: scale(1.2);
+}
+
+.doodle-canvas-wrapper {
+  background: #ffffff;
+  border: 2px solid var(--border-accent);
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  box-shadow: inset 0 2px 6px rgba(0,0,0,0.1);
+  cursor: crosshair;
+}
+
+#doodleCanvas {
+  width: 100%;
+  height: 280px;
+  touch-action: none;
+}
+
+/* ==========================================================================
+   4. Floating Pomodoro Focus Timer Widget (Centered Popup)
+   ========================================================================== */
+.pomodoro-floating-widget {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.95);
+  width: 90%;
+  max-width: 360px;
+  background-color: var(--bg-modal);
+  border: 2px solid var(--accent-terracotta);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.45), var(--shadow-lg);
+  z-index: 1050;
+  display: none;
+  flex-direction: column;
+  overflow: hidden;
+  opacity: 0;
+  transition: opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1), transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.pomodoro-floating-widget.active {
+  display: flex;
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+
+.pomo-header {
+  background-color: var(--bg-toolbar);
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.pomo-title {
+  font-family: var(--font-heading);
+  font-size: 16px;
+  font-weight: bold;
+  color: var(--accent-terracotta);
+}
+
+.pomo-close-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.pomo-body {
+  padding: 16px;
+  text-align: center;
+}
+
+.pomo-mode-tabs {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 12px;
+}
+
+.pomo-mode-btn {
+  flex: 1;
+  background: var(--bg-input);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 4px 6px;
+  font-size: 12px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.pomo-mode-btn.active {
+  background: var(--accent-terracotta);
+  color: #fff;
+  border-color: var(--accent-terracotta);
+}
+
+.pomo-timer-display {
+  font-family: var(--font-heading);
+  font-size: 46px;
+  font-weight: bold;
+  color: var(--text-primary);
+  letter-spacing: 1px;
+  margin: 6px 0;
+}
+
+.pomo-progress-track {
+  width: 100%;
+  height: 6px;
+  background: var(--border-subtle);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 14px;
+}
+
+.pomo-progress-fill {
+  height: 100%;
+  background: var(--accent-terracotta);
+  width: 0%;
+  transition: width 0.3s linear;
+}
+
+.pomo-controls {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.pomo-task-info {
+  font-size: 13px;
+  color: var(--text-muted);
+  background: var(--bg-pill);
+  padding: 6px 10px;
+  border-radius: var(--radius-sm);
+  margin-top: 6px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ==========================================================================
+   5. Stats Modal Styling
+   ========================================================================== */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.stat-box {
+  background-color: var(--bg-input);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 14px;
+  text-align: center;
+}
+
+.stat-box-num {
+  font-family: var(--font-heading);
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--accent-terracotta);
+}
+
+.stat-box-label {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.stat-tags-cloud {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.stat-tag-pill {
+  background-color: var(--bg-input);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-pill);
+  padding: 3px 8px;
+  font-size: 12px;
+  font-family: var(--font-code);
+}
+
+/* ==========================================================================
+   6. Export / Import Modal
+   ========================================================================== */
+.export-section-group {
+  margin-bottom: 20px;
+}
+
+.export-section-group h4 {
+  font-family: var(--font-heading);
+  font-size: 16px;
+  color: var(--accent-terracotta);
+  margin-bottom: 6px;
+}
+
+.export-section-group p {
+  font-size: 14px;
+  color: var(--text-muted);
+  margin-bottom: 12px;
+}
+
+.export-btn-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+/* ==========================================================================
+   7. Toast Notifications
+   ========================================================================== */
+.toast-container {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 2000;
+  pointer-events: none;
+}
+
+.toast-notification {
+  background-color: var(--bg-header);
+  border: 1px solid var(--accent-terracotta);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: 15px;
+  padding: 10px 18px;
+  border-radius: var(--radius-pill);
+  box-shadow: var(--shadow-lg);
+  opacity: 0;
+  transform: translateY(15px);
+  transition: opacity 0.25s ease, transform 0.25s ease;
+  pointer-events: auto;
+}
+
+.toast-notification.show {
+  opacity: 1;
+  transform: translateY(0);
+}
