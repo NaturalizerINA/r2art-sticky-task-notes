@@ -365,6 +365,9 @@
   transform: translate(-50%, -50%) scale(0.95);
   width: 90%;
   max-width: 360px;
+  max-height: min(90vh, 520px);
+  overflow-y: auto;
+  box-sizing: border-box;
   background-color: var(--bg-modal);
   border: 2px solid var(--accent-terracotta);
   border-radius: var(--radius-lg);
@@ -372,7 +375,6 @@
   z-index: 1050;
   display: none;
   flex-direction: column;
-  overflow: hidden;
   opacity: 0;
   transition: opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1), transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -424,8 +426,9 @@
   background: var(--bg-input);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-sm);
-  padding: 4px 6px;
-  font-size: 12px;
+  padding: 4px 3px;
+  font-size: 11px;
+  white-space: nowrap;
   color: var(--text-secondary);
   cursor: pointer;
   transition: all 0.15s ease;
